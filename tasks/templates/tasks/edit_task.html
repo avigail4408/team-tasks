@@ -1,0 +1,14 @@
+<h1>עריכת משימה</h1>
+<form method="post">
+  {% csrf_token %}
+  <label>שם המשימה:</label>
+  <input type="text" name="name" value="{{ task.name }}" required><br>
+
+  <label>תיאור:</label>
+  <input type="text" name="description" value="{{ task.description }}" required><br>
+
+  <label>תאריך סיום:</label>
+  <input type="date" name="dateEndTask" value="{{ task.dateEndTask }}" required><br>
+
+  <button type="submit">שמירה</button>
+</form>

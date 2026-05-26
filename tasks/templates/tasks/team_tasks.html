@@ -1,0 +1,82 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'tasks/css/style.css' %}">
+
+<h1>משימות הצוות שלי</h1>
+
+<div class="form-container">
+    <h3>סינון משימות</h3>
+    <form method="get">
+        <label>סטטוס:</label>
+        <select name="status">
+            <option value="">הכל</option>
+            {% for key, val in status_choices %}
+                <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ val }}</option>
+            {% endfor %}
+        </select>
+
+<label>עובד:</label>
+
+<select name="worker">
+
+  <option value="">הכל</option>
+
+  {% for w in worker.team.worker_set.all %}
+
+    <option value="{{ w.id }}">{{ w.name }}</option>
+
+  {% endfor %}
+
+</select>
+        <button type="submit">סנן</button>
+    </form>
+</div>
+
+{% if worker.status == 'ADMIN' %}
+    <a href="{% url 'add_task' %}" class="btn">+ הוסף משימה חדשה</a>
+{% endif %}
+
+<table class="task-table">
+    <thead>
+        <tr>
+            <th>משימה</th>
+            <th>סטטוס</th>
+            <th>מבצע</th>
+            <th>פעולות</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td><b>{{ task.name }}</b></td>
+            <td class="{% if task.status == 'NEW' %}status-new{% elif task.status == 'IN_PROGRESS' %}status-progress{% else %}status-completed{% endif %}">
+                {{ task.get_status_display }}
+            </td>
+            <td>
+                {% if task.worker %}{{ task.worker.name }}{% else %}<i>טרם שויך</i>{% endif %}
+            </td>
+            <td>
+                {% if not task.worker and worker.status == 'WORKER' %}
+                    <a href="{% url 'take_task' task.id %}" class="btn">קח משימה</a>
+                {% endif %}
+
+                {% if worker.status == 'ADMIN' and not task.worker %}
+                    <a href="{% url 'edit_task' task.id %}">ערוך</a> | 
+                    <a href="{% url 'delete_task' task.id %}" style="color:red;">מחק</a>
+                {% endif %}
+
+                {% if task.worker == worker %}
+                    <form method="post" action="{% url 'update_status' task.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <select name="status" style="width: auto;">
+                            {% for key, val in status_choices %}
+                                <option value="{{ key }}" {% if task.status == key %}selected{% endif %}>{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">עדכן</button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

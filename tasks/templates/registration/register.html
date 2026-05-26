@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'tasks/css/style.css' %}">
+    <title>הרשמה למערכת</title>
+</head>
+<body>
+    <h1>הרשמה למערכת</h1>
+    <div class="form-container">
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+
+            <label>Username:</label>
+            <input type="text" name="username" required>
+
+            <label>Password:</label>
+            <input type="password" name="password" required>
+
+            <label>שם מלא:</label>
+            <input type="text" name="name" required>
+
+            <label>צוות:</label>
+            <select name="team" required>
+                <option value="" disabled selected>בחר צוות מהרשימה</option>
+                {% for team in teams %}
+                    <option value="{{ team.id }}">{{ team.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label>תפקיד:</label>
+            <select name="status" required>
+                {% for key, val in statuses %}
+                    <option value="{{ key }}">{{ val }}</option>
+                {% endfor %}
+            </select>
+
+            <br><br>
+            <button type="submit" class="btn">הרשם עכשיו</button>
+        </form>
+    </div>
+</body>
+</html>

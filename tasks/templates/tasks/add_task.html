@@ -1,0 +1,24 @@
+<h1>הוספת משימה</h1>
+<form method="post">
+  {% csrf_token %}
+  <label>שם המשימה:</label>
+  <input type="text" name="name" required><br>
+
+  <label>תיאור:</label>
+  <input type="text" name="description" required><br>
+
+ <label>תאריך סיום:</label>
+<input type="date" name="dateEndTask" id="dateEndTask" required>
+
+<script>
+    document.getElementById('dateEndTask').min = new Date().toISOString().split("T")[0];
+</script>
+  <label>צוות:</label>
+  <select name="team">
+    {% for team in teams %}
+      <option value="{{ team.id }}">{{ team.name }}</option>
+    {% endfor %}
+  </select><br>
+
+  <button type="submit">הוסף משימה</button>
+</form>
